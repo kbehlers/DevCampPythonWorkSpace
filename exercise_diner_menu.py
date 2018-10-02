@@ -1,3 +1,4 @@
+#Equivalent of an exercise in the JS section
 entrees = {
     "Beef": 5,
     "Pork": 4,
