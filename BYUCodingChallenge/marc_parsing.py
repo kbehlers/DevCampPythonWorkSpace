@@ -6,6 +6,7 @@ from datetime import datetime
 import os
 import copy
 
+#--FUNCTION DEFINITIONS--
 def generate_BYU_url():
     """Asks user for key, returns url string"""
     while True:
@@ -24,11 +25,23 @@ def retrieve_MARC_text(url):
     r = requests.get(url)
     return r.text
 
+def get_most_recent_date(list_of_dates):
+    """Takes list of dates formatted yyyymmdd"""
+    return max(list_of_dates)
+
+def format_date(date_yyyymmdd):
+    """Returns ISO 8601 format yyyy-mm-dd"""
+    return datetime.strptime(date_yyyymmdd, "%Y%m%d").date().isoformat()
+
+
+#--CLASS DEFINITIONS--
 class MARCRecord():
     """Representation of MARC Record"""
 
-    def __init__(self, marc_string):
+    def __init__(self, marc_string, fields_to_parse_OrderedDict):
         self.marc_string = marc_string
+        self.fields_to_parse_OrderedDict = fields_to_parse_OrderedDict
+        self.parsed_marc = self.parse_fields(self.fields_to_parse_OrderedDict)
     
     def parse_fields(self, fields_to_parse_OrderedDict):
         """Parse record for fields present in OrderedDict
@@ -56,42 +69,35 @@ class MARCRecord():
                             fields_storage[line_id] = OrderedDict([(subfield_id, [subfield_content])])
         return fields_storage
 
-def get_most_recent_date(list_of_dates):
-    """Takes list of dates formatted yyyymmdd"""
-    return max(list_of_dates)
+    def get_ordered_tag_content(self):
+        """Returns list of currently parsed fields for the object (defaults defined at object instantiation)"""
+        retrieved_tags = []
+        for field_id in self.parsed_marc.values():
+            for subValue in field_id.values():
+                for element in subValue:
+                    retrieved_tags.append(element)
+        return retrieved_tags
 
-def format_date(date_yyyymmdd):
-    """Returns ISO 8601 format yyyy-mm-dd"""
-    return datetime.strptime(date_yyyymmdd, "%Y%m%d").date().isoformat()
-
-def get_ordered_tag_content(marc_orderedDict):
-    """Takes orderedDict of marc tags, returns list of ordered content"""
-    retrieved_tags = []
-    for field_id in marc_orderedDict.values():
-        for subValue in field_id.values():
-            for element in subValue:
-                retrieved_tags.append(element)
-    return retrieved_tags
-    
-def print_out_tags(tags_list, delimiter="|", filepath=""):
-    """Outputs delimited tag string to screen and filepath(if provided)"""
-    tags_string = delimiter.join(tags_list)
-    tags_string += delimiter
-    if filepath == "":
-        print(tags_string)
-    else:
-        try:
-            with open(filepath, 'w') as file_object:
-                file_object.write(tags_string) 
-        except FileNotFoundError:
-            print("Invalid file path")
-            print(tags_list)
-        except:
-            print("Unknown error, without filepath arg")
-            print(tags_list)
-        else:
-            print(f'File created at: {os.path.abspath(filepath)}')
+    def print_tags_delimited(self, delimiter="|", filepath=""):
+        """Outputs currently parsed fields to screen and filepath(if provided) as delimited string"""
+        tags_list = self.get_ordered_tag_content()
+        tags_string = delimiter.join(tags_list)
+        tags_string += delimiter
+        if filepath == "":
             print(tags_string)
+        else:
+            try:
+                with open(filepath, 'w') as file_object:
+                    file_object.write(tags_string) 
+            except FileNotFoundError:
+                print("Invalid file path")
+                print(tags_list)
+            except:
+                print("Unknown error, without filepath arg")
+                print(tags_list)
+            else:
+                print(f'File created at: {os.path.abspath(filepath)}')
+                print(tags_string)
 
 
 #Ordered dictionary where keys are numeric tags and values are SETS of subfield tags
@@ -99,12 +105,10 @@ fields_to_parse = OrderedDict([('245', {'$a'}),('100', {'$a'}),('583', {'$c'})])
 url = generate_BYU_url()
 
 marc_text = retrieve_MARC_text(url)
-marc_instance = MARCRecord(marc_text)
-parsed_marc_fields = marc_instance.parse_fields(fields_to_parse)
+marc_instance = MARCRecord(marc_text, fields_to_parse)
 
-most_recent = get_most_recent_date(parsed_marc_fields['583']['$c'][:])
+most_recent = get_most_recent_date(marc_instance.parsed_marc['583']['$c'][:])
 formatted_date = format_date(most_recent)
-parsed_marc_fields['583']['$c'] = [formatted_date]
+marc_instance.parsed_marc['583']['$c'] = [formatted_date]
 
-retrieved_tags_to_print = get_ordered_tag_content(parsed_marc_fields)
-print_out_tags(retrieved_tags_to_print, filepath='output.txt')
+marc_instance.print_tags_delimited(filepath='output.txt')
