@@ -3,6 +3,7 @@ import requests
 import io
 import re
 from datetime import datetime
+import os
 
 #TODO Get user input 
 #TODO validate user input
@@ -29,60 +30,103 @@ def retrieve_MARC_record(url):
     r = requests.get(url)
     return r.text
 
-url = generate_url()
-MARC_body = retrieve_MARC_record(url)
+class MARCRecord():
+    """Representation of MARC Record"""
+
+    def __init__(self, marc_string):
+        self.marc_string = marc_string
+    
+    def parse_fields(self, fields_to_parse_OrderedDict):
+        """Parse record for fields present in OrderedDict
+        Returns OrderedDict with field key:value pairs
+        """
+        fields_storage = fields_to_parse_OrderedDict.copy()
+        tags_list = re.split(r"\n(?=\d{3})", self.marc_string)
+        for element in tags_list:
+            line_id = str(element[:3])
+            if fields_to_parse.get(line_id):
+                subfields = re.split(r"(?<=^\d{3})\s+..\s+", element, maxsplit=1,flags=re.MULTILINE)
+                subfields_split = re.split(r"\n\s+(?=\$. )", subfields[-1])
+                for field in subfields_split:
+                    subfield_id = field[:2]
+                    if subfield_id in fields_to_parse.get(line_id):
+                        subfield_content = field[3:]
+                        if type(fields_storage[line_id]) is OrderedDict:
+                            if subfield_id in fields_storage[line_id]:
+                                fields_storage[line_id][subfield_id].append(subfield_content)
+                            else:
+                                fields_storage[line_id][subfield_id] = [subfield_content]
+                        else: 
+                            fields_storage[line_id] = OrderedDict([(subfield_id, [subfield_content])])
+        return fields_storage
+
+def get_most_recent_date(list_of_dates):
+    """Takes list of dates formatted yyyymmdd"""
+    return max(list_of_dates)
+def format_date(date_yyyymmdd):
+    """Returns ISO 8601 format yyyy-mm-dd"""
+    return datetime.strptime(date_yyyymmdd, "%Y%m%d").date().isoformat()
+
+
+def get_ordered_tag_content(marc_orderedDict):
+    retrieved_tags = []
+    for field_id in marc_orderedDict.values():
+        for subValue in field_id.values():
+            for element in subValue:
+                retrieved_tags.append(element)
+    return retrieved_tags
+    
 
 fields_to_parse = OrderedDict([('245', {'$a'}),('100', {'$a'}),('583', {'$c'})])
-fields_storage = fields_to_parse.copy()
-# print(fields_to_parse['100'])
-# for key,value in fields_to_parse.items():
-#     print("Key is: " + key)
-#     print("Value is: " + value)
-
-def parse_fields(MARC_string, fields_OrderedDict):
-    return null
-
-tags_list = re.split(r"\n(?=\d{3})", MARC_body)
-for element in tags_list:
-    line_id = str(element[:3])
-    if fields_to_parse.get(line_id):
-        subfields = re.split(r"(?<=^\d{3})\s+..\s+", element, maxsplit=1,flags=re.MULTILINE)
-        subfields_split = re.split(r"\n\s+(?=\$. )", subfields[-1])
-        for field in subfields_split:
-            subfield_id = field[:2]
-            if subfield_id in fields_to_parse.get(line_id):
-                subfield_content = field[3:]
-                if type(fields_storage[line_id]) is OrderedDict:
-                    if subfield_id in fields_storage[line_id]:
-                        fields_storage[line_id][subfield_id].append(subfield_content)
-                    else:
-                        fields_storage[line_id][subfield_id] = [subfield_content]
-                else: 
-                    fields_storage[line_id] = OrderedDict([(subfield_id, [subfield_content])])
-
-for key, value in fields_storage.items():
-    print (f"key: {key}")
-    for subKey, subValue in value.items():
-        print(f'{subKey}: {subValue}')
-
-
-most_recent = max(fields_storage['583']['$c'])
-formatted_date = datetime.strptime(most_recent, "%Y%m%d").date().isoformat()
+url = generate_url()
+MARC_body = retrieve_MARC_record(url)
+marc_instance = MARCRecord(MARC_body)
+fields_storage = marc_instance.parse_fields(fields_to_parse)
+most_recent = get_most_recent_date(fields_storage['583']['$c'])
+formatted_date = format_date(most_recent)
 fields_storage['583']['$c'] = [formatted_date]
 
-retrieved_tags_to_print = []
-for field_id in fields_storage.values():
-    for subValue in field_id.values():
-        for element in subValue:
-            retrieved_tags_to_print.append(element)
+retrieved_tags_to_print = get_ordered_tag_content(fields_storage)
+
+
+# for key, value in fields_storage.items():
+#     print (f"key: {key}")
+#     for subKey, subValue in value.items():
+#         print(f'{subKey}: {subValue}')
+
+
+# most_recent = max(fields_storage['583']['$c'])
+# formatted_date = datetime.strptime(most_recent, "%Y%m%d").date().isoformat()
+
+
+# retrieved_tags_to_print = []
+# for field_id in fields_storage.values():
+#     for subValue in field_id.values():
+#         for element in subValue:
+#             retrieved_tags_to_print.append(element)
 
 def print_out_tags(tags_list, delimiter="|", filepath=""):
     tags_string = delimiter.join(tags_list)
     tags_string += delimiter
     if filepath == "":
         print(tags_string)
+    else:
+        try:
+            with open(filepath, 'w') as file_object:
+                file_object.write(tags_string) 
+        except FileNotFoundError:
+            print("Invalid file path")
+            print(tags_list)
+        except:
+            print("Unknown error, without filepath arg")
+            print(tags_list)
+        else:
+            print(f'File created at: {os.path.abspath(filepath)}')
+            print(tags_string)
 
-print_out_tags(retrieved_tags_to_print)
+
+
+print_out_tags(retrieved_tags_to_print, filepath='output.txt')
 
 
 # for tag in tags_list:
