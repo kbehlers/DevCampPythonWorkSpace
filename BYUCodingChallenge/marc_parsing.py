@@ -38,13 +38,13 @@ class MARCRecord():
         tags_list = re.split(r"\n(?=\d{3})", self.marc_string)
         for element in tags_list:
             line_id = str(element[:3])
-            if fields_to_parse.get(line_id):
+            if fields_storage.get(line_id):
                 # two dots used to capture "indicator values" defined in MARC standard
                 subfields = re.split(r"(?<=^\d{3})\s+..\s+", element, maxsplit=1,flags=re.MULTILINE)
                 subfields_split = re.split(r"\n\s+(?=\$. )", subfields[-1])
                 for field in subfields_split:
                     subfield_id = field[:2]
-                    if subfield_id in fields_to_parse.get(line_id):
+                    if subfield_id in fields_storage.get(line_id):
                         subfield_content = field[3:]
                         #Relies on passed dictionary being 'key:value' being 'id: SET of subfields'
                         if type(fields_storage[line_id]) is OrderedDict:
@@ -93,7 +93,6 @@ def print_out_tags(tags_list, delimiter="|", filepath=""):
             print(f'File created at: {os.path.abspath(filepath)}')
             print(tags_string)
 
-    
 
 #Ordered dictionary where keys are numeric tags and values are SETS of subfield tags
 fields_to_parse = OrderedDict([('245', {'$a'}),('100', {'$a'}),('583', {'$c'})])
