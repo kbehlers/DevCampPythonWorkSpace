@@ -3,8 +3,9 @@ mongo.json
 launch.json
 settings.json
 
-*.pyc
+
 __pycache__/
+*.pyc
 *.log
 local_settings.py
 db.sqlite3
