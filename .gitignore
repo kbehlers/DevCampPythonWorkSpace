@@ -2,3 +2,6 @@ DevCampPythonWorkSpaceLaunchFile.code-workspace
 mongo.json
 launch.json
 settings.json
+
+*.pyc
+__pycache__/
