@@ -18,5 +18,7 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    #Namespaced in urls.py files in each folder
+    path('users/', include('users.urls')),
     path('', include('learning_logs.urls')),
 ]
