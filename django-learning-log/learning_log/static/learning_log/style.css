@@ -1,0 +1,16 @@
+.navbar-toggle.collapsed {
+    /* !important so that collapsed state always stays this color */
+    background-color: #1266AB !important;
+}
+
+.navbar-toggle{
+    background-color: #063D6B;
+}
+
+.navbar-default .navbar-toggle:focus, .navbar-default .navbar-toggle:hover {
+    background-color: #063D6B;
+}
+
+.navbar-default .navbar-toggle .icon-bar {
+    background-color: #f9f9f9;
+}

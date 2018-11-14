@@ -1,4 +1,5 @@
 {% load bootstrap3 %}
+{% load static %}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -9,15 +10,19 @@
     <title>Learning Log</title>
     {% bootstrap_css %}
     {% bootstrap_javascript %}
+    <link rel="stylesheet" href="{% static 'learning_log/style.css' type='text/css' %}">
 </head>
 <body>
     <!-- Static navbar -->
     <nav class="navbar navbar-default navbar-static-top">
         <div class="container">
             <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed"
+                <button id='hamburger' type="button" class="navbar-toggle collapsed"
                     data-toggle="collapse" data-target="#navbar"
                     aria-expanded='false' aria-controls="navbar">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
                 </button>
                 <a href="{% url 'learning_logs:index' %}" class="navbar-brand">
                     Learning Log
