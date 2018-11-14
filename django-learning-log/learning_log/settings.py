@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+import django_heroku
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -26,7 +27,7 @@ DEBUG = False
 if DEBUG:
     SECRET_KEY = '%hkhfj=fe6i4#o3(621d7c!w$dy-2i4&wgyp@kv4c)+mzw#gd$'
 else:
-    SECRET_KEY = os.environ.get['SECRET_KEY', ""]
+    SECRET_KEY = os.environ.get('SECRET_KEY', "")
 
 ALLOWED_HOSTS = []
 
@@ -160,3 +161,5 @@ if cwd == '/app' or cwd[:4] == '/tmp':
     )
 
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+    django_heroku.settings(locals())
