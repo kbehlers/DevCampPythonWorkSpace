@@ -12,6 +12,8 @@
             <a href="{% url 'learning_logs:topics' %}">My Topics</a>
         {% else %}
             <a href="{% url 'users:register' %}">Register an Account</a>
+            <div>or</div>
+            <a href="{% url 'users:login' %}">Login</a>
         {% endif %}
     </h2>
 {% endblock content %}
