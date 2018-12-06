@@ -7,13 +7,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Learning Log</title>
+    <title>Jot Down</title>
     {% bootstrap_css %}
     {% bootstrap_javascript %}
     <link rel="stylesheet" href="{% static 'learning_log/style.css' type='text/css' %}">
 </head>
 <body>
-    <!-- Static navbar -->
+    <!-- Navbar -->
     <nav class="navbar navbar-default navbar-static-top">
         <div class="container">
             <div class="navbar-header">
@@ -25,7 +25,7 @@
                     <span class="icon-bar"></span>
                 </button>
                 <a href="{% url 'learning_logs:index' %}" class="navbar-brand">
-                    Learning Log
+                    Jot Down
                 </a>
             </div>
             <div id="navbar" class="navbar-collapse collapse">
@@ -41,7 +41,7 @@
                         <li><a href="{% url 'users:login' %}">Log In</a></li>
                     {% endif %}
                 </ul>
-            </div><!-- /.nav-collapse -->
+            </div>
         </div>
     </nav>
     <div class="container">
@@ -50,7 +50,7 @@
         </div>
         <div>
             {% block content %}{% endblock content %}
-        </div><!-- /container -->
+        </div>
     </div>
 </body>
 </html>

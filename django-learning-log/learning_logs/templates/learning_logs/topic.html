@@ -16,6 +16,9 @@
                     {{ entry.date_added|date:'M d, Y H:i'}}
                     <small>
                         <a href="{% url 'learning_logs:edit_entry' entry.id %}">Edit Entry</a>
+                        <form class="pull-right">
+                           <button formaction="{% url 'learning_logs:delete_entry' entry_id=entry.id topic_id=topic.id %}" type="submit">Delete Entry</button>
+                        </form>
                     </small>
                 </h3>
             </div>
