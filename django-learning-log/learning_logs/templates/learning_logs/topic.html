@@ -1,5 +1,26 @@
 {% extends 'learning_logs/base.html' %}
 
+{% block javascript %}
+<script defer>
+    window.addEventListener('load', function () {
+        var deleteLinks = document.querySelectorAll('.delete-form');
+
+        for (var i = 0; i < deleteLinks.length; i++) {
+            deleteLinks[i].addEventListener('submit', function (event) {
+                var choice = confirm("\n\nAre you sure you want to PERMANENTLY delete the entry?\n\nPress OK to proceed with deletion\nPress Cancel to go back");
+
+                if (choice) {
+                    console.log(event)
+                }
+                else {
+                    event.preventDefault();
+                }
+            });
+        }
+    }, false);
+</script>
+{% endblock javascript %}
+
 {% block header %}
     <h2>{{topic}}</h2>    
 {% endblock header %}    
@@ -16,8 +37,8 @@
                     {{ entry.date_added|date:'M d, Y H:i'}}
                     <small>
                         <a href="{% url 'learning_logs:edit_entry' entry.id %}">Edit Entry</a>
-                        <form class="pull-right">
-                           <button formaction="{% url 'learning_logs:delete_entry' entry_id=entry.id topic_id=topic.id %}" type="submit">Delete Entry</button>
+                        <form class="delete-form pull-right" action="{% url 'learning_logs:delete_entry' entry_id=entry.id topic_id=topic.id %}">
+                           <input class="btn" value="Delete Entry" type="submit"></input>
                         </form>
                     </small>
                 </h3>
