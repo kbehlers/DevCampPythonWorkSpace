@@ -33,7 +33,7 @@ def detail(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
     return render(request, 'polls/detail.html', {'question': question})
 
-def results(reqeust, question_id):
+def results(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
     return render(request, 'polls/results.html', {'question': question})
 
@@ -56,5 +56,4 @@ def vote(request, question_id):
         # POST data. This prevents data from being posted twice if a 
         # user hits the Back button
         # reverse() is a dynamic url constructor that returns a url-encoded string by referencing the urls.py file
-        print(reverse('polls:results', args=(question.id,)))
         return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
