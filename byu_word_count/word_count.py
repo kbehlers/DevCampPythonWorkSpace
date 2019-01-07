@@ -16,7 +16,7 @@ def remove_punctuation(target_string, retain_hyphens=True):
     if retain_hyphens:
         #Preserve the hyphen char by removing it from the punctuation_to_remove string
         punctuation_to_remove = punctuation_to_remove.replace("-", '')
-    #maketrans below maps empty string to empty string as placholder, and then maps third argument to None, removing all punctuation
+    #maketrans below maps empty string to empty string as placeholder, and then maps third argument to None, removing all punctuation
     cleansed_string = target_string.translate(str.maketrans('','',punctuation_to_remove))
     return cleansed_string
 
