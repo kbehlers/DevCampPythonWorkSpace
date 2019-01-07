@@ -13,7 +13,7 @@ def remove_punctuation(target_string, retain_hyphens=True):
 
     punctuation_to_remove = ''.join(punctuation_to_remove_list)
     if retain_hyphens:
-        #Preserve the hyphen char by removing it from the punctuation_to_remove
+        #Preserve the hyphen char by removing it from the punctuation_to_remove string
         punctuation_to_remove = punctuation_to_remove.replace("-", '')
     #maketrans below maps empty string to empty string as placholder, and then maps third argument to None, removing all punctuation
     cleansed_string = target_string.translate(str.maketrans('','',punctuation_to_remove))
@@ -36,8 +36,9 @@ def parse_file_to_word_counter(filename):
 def most_common_words(filename, results_to_return=3):
     """Counts the number of words in the file, returns the top 3 results by default"""
     word_counts = parse_file_to_word_counter(filename)
-    for key, value in word_counts.items():
-        print("Key: " + str(key), "Value: " + str(value))
+    # #Uncomment to get output to terminal of what is being stored
+    # for key, value in word_counts.items():
+    #     print("Key: " + str(key), "Value: " + str(value))
     print(word_counts.most_common(results_to_return))
 
 def count_word(filename, word_to_count):
