@@ -3,6 +3,7 @@ from collections import Counter
 
 def remove_punctuation(target_string, retain_hyphens=True):
     """Accepts a string, removes punctuation (keeps hyphens by default), returns cleansed string"""
+    #Python string.punctuation constant and unicode lookups
     punctuation_to_remove_list = [
             string.punctuation,
             "\N{Left Double Quotation Mark}",
