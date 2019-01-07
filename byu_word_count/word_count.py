@@ -35,12 +35,14 @@ def parse_file_to_word_counter(filename):
         return word_counter
 
 def most_common_words(filename, results_to_return=3):
-    """Counts the number of words in the file, returns the top 3 results by default"""
+    """Counts the number of words in the file, 
+    return a list of the n most common elements and their counts from the most common to the least
+    returns the top 3 results by default"""
     word_counts = parse_file_to_word_counter(filename)
     # #Uncomment to get output to terminal of what is being stored
     # for key, value in word_counts.items():
     #     print("Key: " + str(key), "Value: " + str(value))
-    print(word_counts.most_common(results_to_return))
+    return word_counts.most_common(results_to_return)
 
 def count_word(filename, word_to_count):
     """Counts occurrences of word_to_count in the file, and return count"""
@@ -49,7 +51,7 @@ def count_word(filename, word_to_count):
     return word_counts[formatted_word]
 
 filename="C:/Users/Copy/Downloads/frankenstein.txt"
-most_common_words(filename)
+print(most_common_words(filename))
 print(count_word(filename, "eBooks"))
 
 
