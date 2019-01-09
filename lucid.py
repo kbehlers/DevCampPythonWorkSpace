@@ -1,7 +1,7 @@
 import csv
 from collections import Counter, defaultdict
 import datetime
-from decimal import *
+from decimal import Decimal
 
 output_filepath = "C:/Users/Copy/Downloads/output.csv"
 input_filepath = "C:/Users/Copy/Downloads/paywall_data_combo.csv"
