@@ -6,9 +6,45 @@
     <title>Page Title</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- <link rel="stylesheet" type="text/css" media="screen" href="main.css" /> -->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <style>
+        .hidden {display: none;}
+        button {text-align: center;}
+    </style>
     <!-- <script src="main.js"></script> -->
 </head>
 <body>
-    
+    {% if items %}
+        <script type='text/javascript'>
+            let people = {{ items | safe }};
+            console.log(people)
+        </script>
+        <div id="app">
+            [[ message ]]
+            <ul>
+                <li v-for="person in people" v-bind:key="person.id">
+                    <a v-bind:href="person.url">[[ person.name ]]</a>
+                    <button v-on:click="greet(person.name)">Hey! <span v-bind:id="person.name + person.id" class='hidden'>[[ person.name]]</span> </button>
+                </li>
+            </ul>
+        </div>
+        <script>
+            let app = new Vue({
+                delimiters: [ '[[', ']]' ],
+                el: '#app',
+                data: {
+                    message: 'Hello Vue!',
+                    people: people,
+                },
+                methods: {
+                    greet: function(name) {
+                        console.log('Hello from ' + name + '!')
+                    }
+                }
+            })
+        </script>
+    {% else %}   
+        <p>No items available.</p>
+    {% endif %}
 </body>
 </html>
