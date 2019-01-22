@@ -1,5 +1,6 @@
 import string
 from collections import Counter
+import timeit
 
 def remove_punctuation(target_string, retain_hyphens=True):
     """Accepts a string, removes punctuation (keeps hyphens by default), returns cleansed string"""
@@ -51,7 +52,23 @@ def count_word(filename, word_to_count):
     return word_counts[formatted_word]
 
 filename="C:/Users/Copy/Downloads/frankenstein.txt"
-print(most_common_words(filename))
-print(count_word(filename, "eBooks"))
+# print(most_common_words(filename))
+# print(count_word(filename, "Frankenstein"))
 
 
+SETUP_CODE = '''
+import string
+from collections import Counter
+from __main__ import most_common_words, count_word, parse_file_to_word_counter, remove_punctuation
+filename = "C:/Users/Copy/Downloads/frankenstein.txt"
+'''
+
+TEST_CODE = '''
+most_common_words(filename)
+'''
+
+print(timeit.repeat(
+    setup = SETUP_CODE,
+    stmt = TEST_CODE,
+    repeat=1,
+    number = 1))
